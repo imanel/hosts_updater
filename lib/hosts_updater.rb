@@ -8,7 +8,15 @@ class HostsUpdater
     :hosts_auto_name => 'hosts.auto',
     :hosts_custom_name => 'hosts.custom',
     :hosts_whitelist_name => 'hosts.whitelist',
+    :update => true,
     :verbose => true # For development purposes
+  }
+
+  SOURCES = {
+    :mdl => ['Malware Domain List', 'http://www.malwaredomainlist.com/hostslist/hosts.txt'],
+    :mvps => ['MVPS Hosts', 'http://winhelp2002.mvps.org/hosts.txt'],
+    :swc => ["Dan Pollock's List", 'http://someonewhocares.org/hosts/hosts'],
+    :yoyo => ["Peter Lowe's Ad Server List", 'http://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext']
   }
 
   def initialize(options = {})
@@ -17,6 +25,7 @@ class HostsUpdater
 
   def run
     bootstrap
+    update_auto_file if @options[:update]
   end
 
   private
@@ -47,6 +56,9 @@ class HostsUpdater
       log "Writing default #{hosts_whitelist_location}"
       sudo[File].write(hosts_whitelist_location, HOSTS_WHITELIST_HEADER)
     end
+  end
+
+  def update_auto_file
   end
 
   def sudo
