@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Bernard Potocki"]
   s.email       = ["bernard.potocki@imanel.org"]
   s.homepage    = "http://github.com/imanel/hosts_updater"
+  s.license     = 'MIT'
   s.summary     = %q{Update your /etc/hosts with list of unwanted domains}
   s.description = %q{Update your /etc/hosts with list of unwanted domains}
 
