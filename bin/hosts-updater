@@ -13,7 +13,28 @@ OptionParser.new do |opts|
     exit
   end
 
-  opts.on("-i", "--ip", "Redirect all blacklisted domains to following IP") do |ip|
+  opts.on("--hosts-file", "Path to hosts file to write (default: /etc/hosts)") do |file|
+    opts[:hosts_file] = file
+  end
+
+  opts.on("--hosts-directory", "Path to hosts.d config directory (default: /etc/hosts.d/)") do |file|
+    opts[:hosts_dir] = file
+  end
+
+  opts.on("--hosts-auto-name", "Name for auto-generated file in hosts.d dir (default: hosts.auto)") do |file|
+    opts[:hosts_auto_name] = file
+  end
+
+  opts.on("--hosts-custom-name", "Name for custom hosts file in hosts.d dir (default: hosts.custom)") do |file|
+    opts[:hosts_custom_name] = file
+  end
+
+  opts.on("--hosts-whitelist-name", "Name for file with whitelisted domains in hosts.d dir (defaule: hosts.whitelist)") do |file|
+    opts[:hosts_whitelist_name] = file
+  end
+
+
+  opts.on("-i", "--ip", "Redirect all blacklisted domains to following IP (default: 0.0.0.0)") do |ip|
     options[:id] = ip
   end
 

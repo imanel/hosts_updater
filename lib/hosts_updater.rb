@@ -30,6 +30,8 @@ class HostsUpdater
     @options[:sources].merge!(sources)
   end
 
+  # Create required files, update auto file if necessary and generate hosts file.
+  # Need to be ran as root in order to access /etc/hosts
   def run
     unless ENV['USER'] == 'root'
       logger.error 'Error: Must run as root'
@@ -83,6 +85,8 @@ class HostsUpdater
     end
   end
 
+  # Download files mentioned in SOURCES and combine them into one saved as hosts_auto_location.
+  # Any comments and duplicates are ommited from original files.
   def update_auto_file
     elements = []
     @options[:sources].each do |source_key, source_data|
@@ -98,6 +102,8 @@ class HostsUpdater
     File.write(hosts_auto_location, hosts.to_s(:force_generation => true))
   end
 
+  # Combine hosts.custom and hosts.auto files into one and write to hosts_location.
+  # Domains listed in hosts.whitelist are ommited from hosts.auto list, but not from hosts.custom
   def update_hosts_file
     auto = Hosts::File.read(hosts_auto_location).elements
     auto.reject! { |el| ! el.is_a? Aef::Hosts::Entry }
@@ -120,6 +126,7 @@ class HostsUpdater
     Hosts::File.parse(data.read).elements.select { |el| el.is_a? Aef::Hosts::Entry }
   end
 
+  # Read hosts.whitelist file and ignore all lines starting with #
   def whitelist
     @whitelist ||= File.read(hosts_whitelist_location).lines.collect(&:strip).reject { |el| /^#/ =~ el }
   end
