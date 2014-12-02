@@ -1,4 +1,5 @@
 require 'hosts'
+require 'logger'
 require 'open-uri'
 
 class HostsUpdater
@@ -30,40 +31,50 @@ class HostsUpdater
 
   def run
     unless ENV['USER'] == 'root'
-      puts('Error: Must run as root')
+      logger.error 'Error: Must run as root'
       exit
     end
     bootstrap
     update_auto_file if @options[:update]
-    log 'Done.', :always => true
+    logger.info 'Done.'
   end
 
   private
 
-  def log(message, opts = {})
-    puts message if (@options[:verbose] || opts[:always]) && !@options[:quiet]
+  def logger
+    return @logger if defined?(@logger)
+    @logger = Logger.new(STDOUT)
+    @logger.level = if @options[:quiet]
+                      Logger::ERROR
+                    elsif @options[:verbose]
+                      Logger::DEBUG
+                    else
+                      Logger::INFO
+                    end
+    @logger.formatter = proc { |severity, datetime, progname, msg| "#{msg}\n" }
+    @logger
   end
 
   # Create /etc/hosts.d and files inside.
   # If /etc/hosts.d/hosts.custom does not exists then it will copy content of /etc/hosts there.
   def bootstrap
     unless Dir.exists? @options[:hosts_directory]
-      log "Creating configuration directory at #{@options[:hosts_directory]}"
+      logger.debug "Creating configuration directory at #{@options[:hosts_directory]}"
       FileUtils.mkdir_p @options[:hosts_directory]
     end
 
     unless File.exists? hosts_custom_location
-      log "Copying #{@options[:hosts_file]} to #{hosts_custom_location}"
+      logger.debug "Copying #{@options[:hosts_file]} to #{hosts_custom_location}"
       File.write(hosts_custom_location, File.read(@options[:hosts_file]))
     end
 
     unless File.exists? hosts_auto_location
-      log "Writing default #{hosts_auto_location}"
+      logger.debug "Writing default #{hosts_auto_location}"
       File.write(hosts_auto_location, HOSTS_AUTO_HEADER)
     end
 
     unless File.exists? hosts_whitelist_location
-      log "Writing default #{hosts_whitelist_location}"
+      logger.debug "Writing default #{hosts_whitelist_location}"
       File.write(hosts_whitelist_location, HOSTS_WHITELIST_HEADER)
     end
   end
@@ -80,7 +91,7 @@ class HostsUpdater
   end
 
   def download_source(source)
-    log "Downloading source #{source[0]}" + (source[1] ? " (#{source[1]})" : "")
+    logger.debug "Downloading source #{source[0]}" + (source[1] ? " (#{source[1]})" : "")
     data = open(source[0])
     Hosts::File.parse(data.read).elements.select { |el| el.is_a? Aef::Hosts::Entry }
   end
