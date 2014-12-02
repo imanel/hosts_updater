@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'hosts_updater'
+
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: hosts-updater [options]"
+
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+
+  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+    options[:verbose] = v
+  end
+end.parse!
+
+HostsUpdater.new(options).run
