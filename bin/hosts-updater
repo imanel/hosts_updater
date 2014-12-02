@@ -3,7 +3,7 @@
 require 'optparse'
 require 'hosts_updater'
 
-options = {}
+options = { :sources => {} }
 
 OptionParser.new do |opts|
   opts.banner = "Usage: hosts-updater [options]"
@@ -18,9 +18,13 @@ OptionParser.new do |opts|
   end
 
   HostsUpdater::SOURCES.each do |source_key, source_data|
-    opts.on("--skip-#{source_key}", "Skip downloading #{source_data[0]} (#{source_data[1]})") do |s|
-      options[source_key] = false
+    opts.on("--skip-#{source_key}", "Skip downloading #{source_data[1]} (#{source_data[0]})") do |s|
+      options[:sources][source_key] = false
     end
+  end
+
+  opts.on("-q", "--quiet", "Run completely silently") do |q|
+    options[:quiet] = q
   end
 
   opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|

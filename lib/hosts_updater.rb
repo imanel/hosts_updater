@@ -1,6 +1,14 @@
-require 'sudo'
+require 'hosts'
+require 'open-uri'
 
 class HostsUpdater
+
+  SOURCES = {
+    :mdl => ['http://www.malwaredomainlist.com/hostslist/hosts.txt', 'Malware Domain List'],
+    :mvps => ['http://winhelp2002.mvps.org/hosts.txt', 'MVPS Hosts'],
+    :swc => ['http://someonewhocares.org/hosts/hosts', "Dan Pollock's List"],
+    :yoyo => ['http://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext', "Peter Lowe's Ad Server List"]
+  }
 
   DEFAULT_OPTIONS = {
     :hosts_file => '/etc/hosts',
@@ -8,30 +16,32 @@ class HostsUpdater
     :hosts_auto_name => 'hosts.auto',
     :hosts_custom_name => 'hosts.custom',
     :hosts_whitelist_name => 'hosts.whitelist',
-    :update => true,
+    :sources => SOURCES,
+    :update => false,
+    :quiet => false,
     :verbose => true # For development purposes
   }
 
-  SOURCES = {
-    :mdl => ['Malware Domain List', 'http://www.malwaredomainlist.com/hostslist/hosts.txt'],
-    :mvps => ['MVPS Hosts', 'http://winhelp2002.mvps.org/hosts.txt'],
-    :swc => ["Dan Pollock's List", 'http://someonewhocares.org/hosts/hosts'],
-    :yoyo => ["Peter Lowe's Ad Server List", 'http://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext']
-  }
-
   def initialize(options = {})
+    sources = options.delete(:sources) || {}
     @options = DEFAULT_OPTIONS.merge(options)
+    @options[:sources].merge!(sources)
   end
 
   def run
+    unless ENV['USER'] == 'root'
+      puts('Error: Must run as root')
+      exit
+    end
     bootstrap
     update_auto_file if @options[:update]
+    log 'Done.', :always => true
   end
 
   private
 
-  def log(message)
-    puts message if @options[:verbose]
+  def log(message, opts = {})
+    puts message if (@options[:verbose] || opts[:always]) && !@options[:quiet]
   end
 
   # Create /etc/hosts.d and files inside.
@@ -39,33 +49,40 @@ class HostsUpdater
   def bootstrap
     unless Dir.exists? @options[:hosts_directory]
       log "Creating configuration directory at #{@options[:hosts_directory]}"
-      sudo[FileUtils].mkdir_p @options[:hosts_directory]
+      FileUtils.mkdir_p @options[:hosts_directory]
     end
 
     unless File.exists? hosts_custom_location
       log "Copying #{@options[:hosts_file]} to #{hosts_custom_location}"
-      sudo[File].write(hosts_custom_location, File.read(@options[:hosts_file]))
+      File.write(hosts_custom_location, File.read(@options[:hosts_file]))
     end
 
     unless File.exists? hosts_auto_location
       log "Writing default #{hosts_auto_location}"
-      sudo[File].write(hosts_auto_location, HOSTS_AUTO_HEADER)
+      File.write(hosts_auto_location, HOSTS_AUTO_HEADER)
     end
 
     unless File.exists? hosts_whitelist_location
       log "Writing default #{hosts_whitelist_location}"
-      sudo[File].write(hosts_whitelist_location, HOSTS_WHITELIST_HEADER)
+      File.write(hosts_whitelist_location, HOSTS_WHITELIST_HEADER)
     end
   end
 
   def update_auto_file
+    elements = []
+    @options[:sources].each do |source_key, source_data|
+      next unless source_data
+      elements += download_source(source_data)
+    end
+    hosts = Hosts::File.new
+    hosts.elements = elements.uniq(&:name).sort { |e1,e2| e1.name <=> e2.name }
+    File.write(hosts_auto_location, hosts.to_s(:force_generation => true))
   end
 
-  def sudo
-    return @sudo if defined?(@sudo)
-    @sudo = Sudo::Wrapper.new
-    @sudo.start!
-    @sudo
+  def download_source(source)
+    log "Downloading source #{source[0]}" + (source[1] ? " (#{source[1]})" : "")
+    data = open(source[0])
+    Hosts::File.parse(data.read).elements.select { |el| el.is_a? Aef::Hosts::Entry }
   end
 
   def hosts_auto_location

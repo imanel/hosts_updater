@@ -18,5 +18,4 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('hosts', '~> 0.1.1')
-  s.add_dependency('sudo', '~> 0.1.1')
 end
