@@ -13,6 +13,10 @@ OptionParser.new do |opts|
     exit
   end
 
+  opts.on("-i", "--ip", "Redirect all blacklisted domains to following IP") do |ip|
+    options[:id] = ip
+  end
+
   opts.on("-u", "--[no-]update", "Update sources") do |u|
     options[:update] = u
   end

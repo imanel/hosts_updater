@@ -17,6 +17,7 @@ class HostsUpdater
     :hosts_auto_name => 'hosts.auto',
     :hosts_custom_name => 'hosts.custom',
     :hosts_whitelist_name => 'hosts.whitelist',
+    :ip => '0.0.0.0',
     :sources => SOURCES,
     :update => false,
     :quiet => false,
@@ -100,7 +101,9 @@ class HostsUpdater
   def update_hosts_file
     hosts = Hosts::File.new(@options[:hosts_file])
     hosts.elements += Hosts::File.read(hosts_custom_location).elements
-    auto = Hosts::File.read(hosts_auto_location).elements.select { |el| el.is_a? Aef::Hosts::Entry }
+    auto = Hosts::File.read(hosts_auto_location).elements.select { |el| el.is_a? Aef::Hosts::Entry }.each do |el|
+      el.address = @options[:ip]
+    end
     hosts.elements << Hosts::EmptyElement.new
     hosts.elements << Hosts::Section.new('HOSTS-UPDATER', :elements => auto)
     logger.debug "Writing to #{@options[:hosts_file]}"
