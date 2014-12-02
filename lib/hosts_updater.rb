@@ -21,7 +21,7 @@ class HostsUpdater
     :sources => SOURCES,
     :update => false,
     :quiet => false,
-    :verbose => true # For development purposes
+    :verbose => false
   }
 
   def initialize(options = {})
@@ -99,11 +99,15 @@ class HostsUpdater
   end
 
   def update_hosts_file
-    hosts = Hosts::File.new(@options[:hosts_file])
-    hosts.elements += Hosts::File.read(hosts_custom_location).elements
-    auto = Hosts::File.read(hosts_auto_location).elements.select { |el| el.is_a? Aef::Hosts::Entry }.each do |el|
+    auto = Hosts::File.read(hosts_auto_location).elements
+    auto.reject! { |el| ! el.is_a? Aef::Hosts::Entry }
+    auto.reject! { |el| whitelist.include? el.name }
+    auto.each do |el|
       el.address = @options[:ip]
     end
+
+    hosts = Hosts::File.new(@options[:hosts_file])
+    hosts.elements = Hosts::File.read(hosts_custom_location).elements
     hosts.elements << Hosts::EmptyElement.new
     hosts.elements << Hosts::Section.new('HOSTS-UPDATER', :elements => auto)
     logger.debug "Writing to #{@options[:hosts_file]}"
@@ -114,6 +118,10 @@ class HostsUpdater
     logger.debug "Downloading source #{source[0]}" + (source[1] ? " (#{source[1]})" : "")
     data = open(source[0])
     Hosts::File.parse(data.read).elements.select { |el| el.is_a? Aef::Hosts::Entry }
+  end
+
+  def whitelist
+    @whitelist ||= File.read(hosts_whitelist_location).lines.collect(&:strip).reject { |el| /^#/ =~ el }
   end
 
   def hosts_auto_location
