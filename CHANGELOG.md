@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2
+
+- fix for `uninintialized constant FileUtils` error (@scharfie)
+
 ## 1.0.1
 
 - fix several command line options (@IvanUkhov)
