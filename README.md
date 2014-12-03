@@ -24,7 +24,7 @@ Unique entries from those lists are added together, and results are combined wit
 
 ## How is it better than AdBlock/Ghostery etc?
 
-Each browser plugin that blocks ads is using [large amount of resources, hogs browser, and often causes strange errors](http://www.reddit.com/r/programming/comments/25j41u/adblock_pluss_effect_on_firefoxs_memory_usage/chhpomw). In constrast to this blacklisting domains in `/etc/hosts` takes couple seconds after file change, but besides that has nearly zero impact on performance. Additionally AdBlock is removing parts of websited very aggresively, often leaving layout broken - it should be less common problem with domain blacklisting.
+Each browser plugin that blocks ads is using [large amount of resources, hogs browser, and often causes strange errors](http://www.reddit.com/r/programming/comments/25j41u/adblock_pluss_effect_on_firefoxs_memory_usage/chhpomw). In constrast to this, blacklisting domains in `/etc/hosts` only takes couple seconds after file change, and besides that has nearly zero impact on performance. Additionally AdBlock is removing parts of websites very aggresively, often leaving broken layout - it should be less common problem with domain blacklisting.
 
 On the other hand there is a small amount of ads that are unblockable by domain blacklisting - that are visible from time to time, but probably not often enough to complain ;)
 
