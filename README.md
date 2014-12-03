@@ -1,6 +1,6 @@
 # Hosts Updater
 
-This script indends to help manage large collection of blacklisted domains. It's best to describe it as replacement for adblock, but instead of slowing down your browser it blocks domains of ad and scam websites at DNS level.
+This script intends to help manage large collection of blacklisted domains. It's best to describe it as a replacement for adblock, but instead of slowing down your browser it blocks domains of ad and scam websites at DNS level.
 
 ## Quick start guide
 
@@ -20,13 +20,13 @@ This script download lists of malicious domains from following websites:
 - http://someonewhocares.org/hosts/hosts
 - http://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext
 
-All of those lists are combined, duplicates removed and combined with your current `hosts` file (no data will should lost as original `hosts` file is copied and reused in future).
+Unique entries from those lists are added together, and results are combined with your current `hosts` file (no data will be lost as original `hosts` file is copied and reused in the future).
 
 ## How is it better than AdBlock/Ghostery etc?
 
-Each browser plugin that blocks ads is using [large amount of resources, hogs browser, and often causes strange errors](http://www.reddit.com/r/programming/comments/25j41u/adblock_pluss_effect_on_firefoxs_memory_usage/chhpomw). In constrast to this blacklisting domains in `/etc/hosts` takes couple seconds after file change, but after that has nearly zero impact on performance. Additionally AdBlock is removing parts of websited very aggresively, often leaving indended layout broken - it should be less common problem with domain blacklisting.
+Each browser plugin that blocks ads is using [large amount of resources, hogs browser, and often causes strange errors](http://www.reddit.com/r/programming/comments/25j41u/adblock_pluss_effect_on_firefoxs_memory_usage/chhpomw). In constrast to this blacklisting domains in `/etc/hosts` takes couple seconds after file change, but besides that has nearly zero impact on performance. Additionally AdBlock is removing parts of websited very aggresively, often leaving layout broken - it should be less common problem with domain blacklisting.
 
-On the other hand there are small amount of ads that are unblockable by domain blacklisting - that are visible from time to time, but probably not often enough to complain ;)
+On the other hand there is a small amount of ads that are unblockable by domain blacklisting - that are visible from time to time, but probably not often enough to complain ;)
 
 ## How to configure what domains I want whitelisted/blacklisted?
 
@@ -34,7 +34,7 @@ During first run `hosts-updater` will create folder in `/etc/hosts.d`, in which 
 
 - `hosts.custom` - this will be copy of old `/etc/hosts` and it will be added to `/etc/hosts` at top upon each use of `hosts-updater`. You should store you developer domains and all similar stuff inside of this file, as it will never be modified by this script. If you need to blacklist additional domains you should put them here too.
 - `hosts.auto` - this will be regenerated upon calling `hosts-updater` with `--update` flag. It stores downloaded blacklists and is used to regenerate `/etc/hosts`. It's good idea to refresh it from time to time.
-- `hosts.whitelist` - in this file you can place domain that you want to have access to despite figuring in one of downloaded lists. In order to do so simply paste full domain name inside there (one domain per line) and it will be picked up during next `hosts-updater` run.
+- `hosts.whitelist` - in this file you can place domains that you want to access despite figuring in one of downloaded lists. In order to do so, simply paste full domain name inside there (one domain per line) and it will be picked up during next `hosts-updater` run.
 
 ## Any other configuration options?
 
