@@ -76,7 +76,7 @@ class HostsUpdater
 
     unless File.exists? hosts_auto_location
       logger.debug "Writing default #{hosts_auto_location}"
-      File.touch(hosts_auto_location)
+      FileUtils.touch(hosts_auto_location)
     end
 
     unless File.exists? hosts_whitelist_location
