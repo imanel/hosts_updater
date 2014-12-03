@@ -9,7 +9,7 @@ $ gem install hosts_updater
 $ sudo hosts-updater --help
 ```
 
-It required sudo in order to write to `/etc/hosts` file.
+It requires sudo in order to write to `/etc/hosts` file.
 
 ## What it does?
 
