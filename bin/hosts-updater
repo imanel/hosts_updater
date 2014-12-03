@@ -13,24 +13,24 @@ OptionParser.new do |opts|
     exit
   end
 
-  opts.on("--hosts-file", "Path to hosts file to write (default: /etc/hosts)") do |file|
-    opts[:hosts_file] = file
+  opts.on("--hosts-file [PATH]", "Path to hosts file to write (default: /etc/hosts)") do |file|
+    options[:hosts_file] = file
   end
 
-  opts.on("--hosts-directory", "Path to hosts.d config directory (default: /etc/hosts.d/)") do |file|
-    opts[:hosts_dir] = file
+  opts.on("--hosts-directory [PATH]", "Path to hosts.d config directory (default: /etc/hosts.d/)") do |file|
+    options[:hosts_dir] = file
   end
 
-  opts.on("--hosts-auto-name", "Name for auto-generated file in hosts.d dir (default: hosts.auto)") do |file|
-    opts[:hosts_auto_name] = file
+  opts.on("--hosts-auto-name [NAME]", "Name for auto-generated file in hosts.d dir (default: hosts.auto)") do |file|
+    options[:hosts_auto_name] = file
   end
 
-  opts.on("--hosts-custom-name", "Name for custom hosts file in hosts.d dir (default: hosts.custom)") do |file|
-    opts[:hosts_custom_name] = file
+  opts.on("--hosts-custom-name [NAME]", "Name for custom hosts file in hosts.d dir (default: hosts.custom)") do |file|
+    options[:hosts_custom_name] = file
   end
 
-  opts.on("--hosts-whitelist-name", "Name for file with whitelisted domains in hosts.d dir (defaule: hosts.whitelist)") do |file|
-    opts[:hosts_whitelist_name] = file
+  opts.on("--hosts-whitelist-name [NAME]", "Name for file with whitelisted domains in hosts.d dir (defaule: hosts.whitelist)") do |file|
+    options[:hosts_whitelist_name] = file
   end
 
 
