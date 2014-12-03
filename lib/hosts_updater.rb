@@ -1,6 +1,7 @@
 require 'hosts'
 require 'logger'
 require 'open-uri'
+require 'fileutils'
 
 class HostsUpdater
 
