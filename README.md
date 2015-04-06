@@ -28,6 +28,10 @@ Each browser plugin that blocks ads is using [large amount of resources, hogs br
 
 On the other hand there is a small amount of ads that are unblockable by domain blacklisting - that are visible from time to time, but probably not often enough to complain ;)
 
+### Slow auto complete
+
+As a lot of hosts are added to your system, autocomplete might slow down. To solve this in [zsh prezto](https://github.com/sorin-ionescu/prezto) one could replace `cat /etc/hosts (|)(N)` with `sed /0\.0\.0\.0/d`. This prevents the domains to be loaded for completion. 
+
 ## How to configure what domains I want whitelisted/blacklisted?
 
 During first run `hosts-updater` will create folder in `/etc/hosts.d`, in which it will store all configuration files:
