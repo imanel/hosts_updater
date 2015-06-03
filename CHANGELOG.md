@@ -1,6 +1,6 @@
 # Changelog
 
-## Edge
+## 1.0.3
 
 - add `--clear` flag that will remove all fetched records from blacklist
 
