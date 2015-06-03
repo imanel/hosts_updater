@@ -13,6 +13,10 @@ OptionParser.new do |opts|
     exit
   end
 
+  opts.on("-c", "--clear", "Clear all blacklisted hosts") do |clear|
+    options[:clear] = clear
+  end
+
   opts.on("--hosts-file [PATH]", "Path to hosts file to write (default: /etc/hosts)") do |file|
     options[:hosts_file] = file
   end
@@ -32,7 +36,6 @@ OptionParser.new do |opts|
   opts.on("--hosts-whitelist-name [NAME]", "Name for file with whitelisted domains in hosts.d dir (defaule: hosts.whitelist)") do |file|
     options[:hosts_whitelist_name] = file
   end
-
 
   opts.on("-i", "--ip", "Redirect all blacklisted domains to following IP (default: 0.0.0.0)") do |ip|
     options[:id] = ip

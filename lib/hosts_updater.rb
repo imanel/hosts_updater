@@ -13,6 +13,7 @@ class HostsUpdater
   }
 
   DEFAULT_OPTIONS = {
+    :clear => false,
     :hosts_file => '/etc/hosts',
     :hosts_directory => '/etc/hosts.d/',
     :hosts_auto_name => 'hosts.auto',
@@ -106,17 +107,20 @@ class HostsUpdater
   # Combine hosts.custom and hosts.auto files into one and write to hosts_location.
   # Domains listed in hosts.whitelist are ommited from hosts.auto list, but not from hosts.custom
   def update_hosts_file
-    auto = Hosts::File.read(hosts_auto_location).elements
-    auto.reject! { |el| ! el.is_a? Aef::Hosts::Entry }
-    auto.reject! { |el| whitelist.include? el.name }
-    auto.each do |el|
-      el.address = @options[:ip]
-    end
-
     hosts = Hosts::File.new(@options[:hosts_file])
     hosts.elements = Hosts::File.read(hosts_custom_location).elements
-    hosts.elements << Hosts::EmptyElement.new
-    hosts.elements << Hosts::Section.new('HOSTS-UPDATER', :elements => auto)
+
+    unless @options[:clear]
+      auto = Hosts::File.read(hosts_auto_location).elements
+      auto.reject! { |el| ! el.is_a? Aef::Hosts::Entry }
+      auto.reject! { |el| whitelist.include? el.name }
+      auto.each do |el|
+        el.address = @options[:ip]
+      end
+      hosts.elements << Hosts::EmptyElement.new
+      hosts.elements << Hosts::Section.new('HOSTS-UPDATER', :elements => auto)
+    end
+
     logger.debug "Writing to #{@options[:hosts_file]}"
     hosts.write
   end

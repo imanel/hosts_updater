@@ -1,5 +1,9 @@
 # Changelog
 
+## Edge
+
+- add `--clear` flag that will remove all fetched records from blacklist
+
 ## 1.0.2
 
 - fix for `uninintialized constant FileUtils` error (@scharfie)
