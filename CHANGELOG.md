@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4
+
+- check process uid instead of env var (@ZJvandeWeg)
+
 ## 1.0.3
 
 - add `--clear` flag that will remove all fetched records from blacklist
