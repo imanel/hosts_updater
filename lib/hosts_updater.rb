@@ -35,7 +35,7 @@ class HostsUpdater
   # Create required files, update auto file if necessary and generate hosts file.
   # Need to be ran as root in order to access /etc/hosts
   def run
-    unless ENV['USER'] == 'root'
+    unless Process.uid == 0
       logger.error 'Error: Must run as root'
       exit
     end
